@@ -13,9 +13,15 @@ function createStore() {
   /**
    *
    * @param {function} listener
-   * @returns
+   * @returns function to unsubscribe
    */
-  const subscribe = listener => listeners.push(listener);
+  const subscribe = listener => {
+    listeners.push(listener);
+
+    return () => {
+      listeners = listeners.filter(l => l !== listener);
+    };
+  };
 
   return {
     getState,
@@ -24,13 +30,9 @@ function createStore() {
 }
 
 const store = createStore();
-
-//Invoke the subscribe method
-store.subscribe(() => {
-  console.log(`The new state is: ${store.getState()}`);
-});
-
-// New subscription
-store.subscribe(() => {
+const unsubscribe = store.subscribe(() => {
   console.log(`The store changed`);
 });
+
+// If we really want to unsubscribe then we invoke the unsubscribe() function
+unsubscribe();

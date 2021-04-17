@@ -6,8 +6,31 @@ function createStore() {
   // $. Update the state
 
   let state;
+  let listeners = [];
 
   const getState = () => state;
 
-  return getState;
+  /**
+   *
+   * @param {function} listener
+   * @returns
+   */
+  const subscribe = listener => listeners.push(listener);
+
+  return {
+    getState,
+    subscribe,
+  };
 }
+
+const store = createStore();
+
+//Invoke the subscribe method
+store.subscribe(() => {
+  console.log(`The new state is: ${store.getState()}`);
+});
+
+// New subscription
+store.subscribe(() => {
+  console.log(`The store changed`);
+});

@@ -1,3 +1,11 @@
+function toDos(state = [], action) {
+  if (action.type === "ADD_TODO") {
+    return state.concat([action.todo]);
+  }
+
+  return state;
+}
+
 function createStore() {
   // The Store should have four paths
   // 1. The State
@@ -11,7 +19,7 @@ function createStore() {
   const getState = () => state;
 
   /**
-   *
+   * Listen for changes
    * @param {function} listener
    * @returns function to unsubscribe
    */
@@ -29,6 +37,7 @@ function createStore() {
   };
 }
 
+/*
 const store = createStore();
 const unsubscribe = store.subscribe(() => {
   console.log(`The store changed`);
@@ -36,3 +45,4 @@ const unsubscribe = store.subscribe(() => {
 
 // If we really want to unsubscribe then we invoke the unsubscribe() function
 unsubscribe();
+*/

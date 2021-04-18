@@ -1,12 +1,10 @@
-function toDos(state = [], action) {
-  if (action.type === "ADD_TODO") {
-    return state.concat([action.todo]);
-  }
-
-  return state;
-}
-
-function createStore() {
+// LIBRARY CODE
+/**
+ *
+ * @param {Pure Function} reducer
+ * @returns
+ */
+function createStore(reducer) {
   // The Store should have four paths
   // 1. The State
   // 2. Get the state
@@ -36,7 +34,7 @@ function createStore() {
   // 4. Update the state
   // Responsible to update the sate inside of the actual Store - It needs to receive the Actiion to tell dispatch() the specific event that occurred inside of the applicaton
   const dispatch = action => {
-    state = toDos(state, action);
+    state = reducer(state, action);
     listeners.forEach(listener => listener()); // Invoke each function inside of the array.
   };
 
@@ -47,12 +45,11 @@ function createStore() {
   };
 }
 
-/*
-const store = createStore();
-const unsubscribe = store.subscribe(() => {
-  console.log(`The store changed`);
-});
+// APP CODE
+function toDos(state = [], action) {
+  if (action.type === "ADD_TODO") {
+    return state.concat([action.todo]);
+  }
 
-// If we really want to unsubscribe then we invoke the unsubscribe() function
-unsubscribe();
-*/
+  return state;
+}

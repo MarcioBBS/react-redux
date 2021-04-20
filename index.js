@@ -45,7 +45,7 @@ function createStore(reducer) {
   };
 }
 
-// APP CODE
+// APP CODE - Reducer
 function toDos(state = [], action) {
   if (action.type === "ADD_TODO") {
     return state.concat([action.todo]);
@@ -53,3 +53,15 @@ function toDos(state = [], action) {
 
   return state;
 }
+
+const store = createStore(toDos);
+
+store.subscribe(() => {
+  console.log("The new state is: ", store.getState());
+});
+
+const learReact = { type: "ADD_TODO", todo: { id: 0, name: "Learn React", complete: false } };
+const readBook = { type: "ADD_TODO", todo: { id: 1, name: "Read a book", complete: true } };
+
+store.dispatch(learReact);
+store.dispatch(readBook);

@@ -1,4 +1,4 @@
-// LIBRARY CODE
+// LIBRARY CODE - The Store!
 /**
  *
  * @param {Pure Function} reducer
@@ -47,11 +47,16 @@ function createStore(reducer) {
 
 // APP CODE - Reducer
 function toDos(state = [], action) {
-  if (action.type === "ADD_TODO") {
-    return state.concat([action.todo]);
+  switch (action.type) {
+    case "ADD_TODO":
+      return state.concat([action.todo]);
+    case "REMOVE_TODO":
+      return state.filter(todo => todo.id !== action.id);
+    case "TOGGLE_TODO":
+      return state.map(todo => (todo.id !== action.id ? todo : Object.assign({}, todo, { complete: !todo.complete })));
+    default:
+      return state;
   }
-
-  return state;
 }
 
 const store = createStore(toDos);
@@ -60,8 +65,20 @@ store.subscribe(() => {
   console.log("The new state is: ", store.getState());
 });
 
-const learReact = { type: "ADD_TODO", todo: { id: 0, name: "Learn React", complete: false } };
-const readBook = { type: "ADD_TODO", todo: { id: 1, name: "Read a book", complete: true } };
+store.dispatch({
+  type: "ADD_TODO",
+  todo: {
+    id: 0,
+    name: "Learn React",
+    complete: false,
+  },
+});
 
-store.dispatch(learReact);
-store.dispatch(readBook);
+store.dispatch({
+  type: "ADD_TODO",
+  todo: {
+    id: 1,
+    name: "Study more",
+    complete: false,
+  },
+});

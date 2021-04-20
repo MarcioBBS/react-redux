@@ -47,7 +47,13 @@ function createStore(reducer) {
 
 /***  Begin - Reducer functions  ***/
 
+const ADD_TODO = "ADD_TODO";
+const REMOVE_TODO = "REMOVE_TODO";
+const TOGGLE_TODO = "TOGGLE_TODO";
+const ADD_GOAL = "ADD_GOAL";
+const REMOVE_GOAL = "REMOVE_GOAL";
 // Root reducer
+// Whenever [dispatch] is called, we invoke our [app] function. The [app] function will then invoke the [todos] reducer as well as the [goals] reducer. Those will return their specific portions of the state. And then, the [app] function will return a state object with a [todos] property (the value of which is what the [todos] reducer returned) and a [goals] property (the value of which is what the [goals] reducer returned).
 function app(state = {}, action) {
   return {
     todos: todos(state.todos, action),
@@ -56,13 +62,14 @@ function app(state = {}, action) {
 }
 
 // APP Todos - Reducer
+//Passing the root reducer to our store since our createStore function can only take one reducer.
 function todos(state = [], action) {
   switch (action.type) {
-    case "ADD_TODO":
+    case ADD_TODO:
       return state.concat([action.todo]);
-    case "REMOVE_TODO":
+    case REMOVE_TODO:
       return state.filter(todo => todo.id !== action.id);
-    case "TOGGLE_TODO":
+    case TOGGLE_TODO:
       return state.map(todo => (todo.id !== action.id ? todo : Object.assign({}, todo, { complete: !todo.complete })));
     default:
       return state;
@@ -72,9 +79,9 @@ function todos(state = [], action) {
 // App Goals - Reducer
 function goals(state = [], action) {
   switch (action.type) {
-    case "ADD_GOAL":
+    case ADD_GOAL:
       return state.concat([action.goal]);
-    case "REMOVE_GOAL":
+    case REMOVE_GOAL:
       return state.filter(goal => goal.id !== action.id);
     default:
       return state;
@@ -90,7 +97,7 @@ store.subscribe(() => {
 });
 
 store.dispatch({
-  type: "ADD_TODO",
+  type: ADD_TODO,
   todo: {
     id: 0,
     name: "Learn React",
@@ -99,7 +106,7 @@ store.dispatch({
 });
 
 store.dispatch({
-  type: "ADD_TODO",
+  type: ADD_TODO,
   todo: {
     id: 1,
     name: "Study more",

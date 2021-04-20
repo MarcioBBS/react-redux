@@ -45,8 +45,18 @@ function createStore(reducer) {
   };
 }
 
-// APP To do - Reducer
-function toDos(state = [], action) {
+/***  Begin - Reducer functions  ***/
+
+// Root reducer
+function app(state = {}, action) {
+  return {
+    todos: todos(state.todos, action),
+    goals: goals(state.goals, action),
+  };
+}
+
+// APP Todos - Reducer
+function todos(state = [], action) {
   switch (action.type) {
     case "ADD_TODO":
       return state.concat([action.todo]);
@@ -60,7 +70,7 @@ function toDos(state = [], action) {
 }
 
 // App Goals - Reducer
-function Goals(state = [], action) {
+function goals(state = [], action) {
   switch (action.type) {
     case "ADD_GOAL":
       return state.concat([action.goal]);
@@ -71,7 +81,9 @@ function Goals(state = [], action) {
   }
 }
 
-const store = createStore(toDos);
+/***  End - Reducer functions  ***/
+
+const store = createStore(app);
 
 store.subscribe(() => {
   console.log("The new state is: ", store.getState());

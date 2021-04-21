@@ -137,15 +137,24 @@
 
       // Lsiten for changes
       store.subscribe(() => {
-        console.log("The new state is: ", store.getState());
+        const { goals, todos } = store.getState();
+
+        document.querySelector("#goals").innerHTML = "";
+        document.querySelector("#todos").innerHTML = "";
+
+        // Add items to the DOM
+        goals.forEach(renderGoalToDOM);
+        todos.forEach(renderTodoToDOM);
       });
 
+      /*** DOM manipulation ***/
       // Add Todo
       function addTodo() {
         const input = document.querySelector("#todo");
         const name = input.value;
         input.value = ""; // Reset the value
 
+        // Add the todo to the state
         store.dispatch(
           addTodoAction({
             name,
@@ -161,6 +170,7 @@
         const name = input.value;
         input.value = ""; // Reset the value
 
+        // Add the goal to the state
         store.dispatch(
           addGoalAction({
             name,
@@ -171,6 +181,22 @@
 
       document.querySelector("#todoBtn").addEventListener("click", addTodo);
       document.querySelector("#goalBtn").addEventListener("click", addGoal);
+
+      function renderTodoToDOM(todo) {
+        const node = document.createElement("li");
+        const text = document.createTextNode(todo.name);
+        node.appendChild(text);
+        document.querySelector("#todos").appendChild(node);
+      }
+
+      function renderGoalToDOM(goal) {
+        const node = document.createElement("li");
+        const text = document.createTextNode(goal.name);
+        node.appendChild(text);
+        document.querySelector("#goals").appendChild(node);
+      }
+
+      /*** END- DOM manipulation ***/
 
       /***  TEST ***/
       // store.dispatch(

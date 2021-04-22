@@ -32,7 +32,7 @@
 
       /*** App Code ***/
 
-      // Constants
+      // Constants Events
       const ADD_TODO = "ADD_TODO";
       const REMOVE_TODO = "REMOVE_TODO";
       const TOGGLE_TODO = "TOGGLE_TODO";
@@ -48,19 +48,18 @@
       );
 
       // Action Creators
-      const addTodoAction = todo => ({ type: ADD_TODO, todo });
+      const addTodoAction = todo => ({ type: ADD_TODO, todo }); // Add todo event
 
-      const removeTodoAction = id => ({ type: REMOVE_TODO, id });
+      const removeTodoAction = id => ({ type: REMOVE_TODO, id }); // Remove todo event
 
-      const toggleTodoAction = id => ({ type: TOGGLE_TODO, id });
+      const toggleTodoAction = id => ({ type: TOGGLE_TODO, id }); // Toggle todo event
 
-      const addGoalAction = goal => ({ type: ADD_GOAL, goal });
+      const addGoalAction = goal => ({ type: ADD_GOAL, goal }); // Add goal event
 
-      const removeGoalAction = id => ({ type: REMOVE_GOAL, id });
+      const removeGoalAction = id => ({ type: REMOVE_GOAL, id }); // Remove goal event
       // End - Action Creators
 
-      // App Todos - Reducer
-      //Passing the root reducer to our store since our createStore function can only take one reducer.
+      // App todos - Reducer
       function todos(state = [], action) {
         switch (action.type) {
           case ADD_TODO:
@@ -74,7 +73,7 @@
         }
       }
 
-      // App Goals - Reducer
+      // App goals - Reducer
       function goals(state = [], action) {
         switch (action.type) {
           case ADD_GOAL:

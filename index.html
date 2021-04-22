@@ -150,6 +150,7 @@
       /*** DOM manipulation ***/
       // Add Todo
       function addTodo() {
+        // Get the value from the UI
         const input = document.querySelector("#todo");
         const name = input.value;
         input.value = ""; // Reset the value
@@ -166,6 +167,7 @@
 
       // Add Goal
       function addGoal() {
+        // Get the value from the UI
         const input = document.querySelector("#goal");
         const name = input.value;
         input.value = ""; // Reset the value
@@ -179,20 +181,45 @@
         );
       }
 
+      //Add new Todo
       document.querySelector("#todoBtn").addEventListener("click", addTodo);
+      //Add new Goal
       document.querySelector("#goalBtn").addEventListener("click", addGoal);
+
+      /**
+       * Create button to remove item from the list
+       * @param {callback function} onclick
+       * @returns the button with the event listener embeeded
+       */
+      function createRemoveButton(onClick) {
+        const removeBtn = document.createElement("button");
+        removeBtn.innerHTML = " X ";
+        removeBtn.addEventListener("click", onClick);
+        return removeBtn;
+      }
 
       function renderTodoToDOM(todo) {
         const node = document.createElement("li");
         const text = document.createTextNode(todo.name);
+        const removeBtn = createRemoveButton(() => store.dispatch(removeTodoAction(todo.id)));
+
         node.appendChild(text);
+        node.appendChild(removeBtn);
+
+        node.style.textDecoration = todo.complete ? "line-through" : "none";
+        node.addEventListener("click", () => store.dispatch(toggleTodoAction(todo.id)));
+
         document.querySelector("#todos").appendChild(node);
       }
 
       function renderGoalToDOM(goal) {
         const node = document.createElement("li");
         const text = document.createTextNode(goal.name);
+        const removeBtn = createRemoveButton(() => store.dispatch(removeGoalAction(goal.id)));
+
         node.appendChild(text);
+        node.appendChild(removeBtn);
+
         document.querySelector("#goals").appendChild(node);
       }
 

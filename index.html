@@ -87,7 +87,12 @@
       /***  End - Reducer functions  ***/
 
       // Create the STORE
-      const store = createStore(app);
+      const store = Redux.createStore(
+        Redux.combineReducers({
+          todos,
+          goals,
+        })
+      );
 
       // Lsiten for changes
       store.subscribe(() => {

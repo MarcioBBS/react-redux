@@ -25,17 +25,27 @@
     </div>
 
     <script>
+      // Create unique ID
       function generateId() {
         return Math.random().toString(36).substring(2) + new Date().getTime().toString(36);
       }
 
-      /***  Begin - Reducer functions  ***/
+      /*** App Code ***/
 
+      // Constants
       const ADD_TODO = "ADD_TODO";
       const REMOVE_TODO = "REMOVE_TODO";
       const TOGGLE_TODO = "TOGGLE_TODO";
       const ADD_GOAL = "ADD_GOAL";
       const REMOVE_GOAL = "REMOVE_GOAL";
+
+      // Create the STORE
+      const store = Redux.createStore(
+        Redux.combineReducers({
+          todos,
+          goals,
+        })
+      );
 
       // Action Creators
       const addTodoAction = todo => ({ type: ADD_TODO, todo });
@@ -49,16 +59,7 @@
       const removeGoalAction = id => ({ type: REMOVE_GOAL, id });
       // End - Action Creators
 
-      // Root reducer
-      // Whenever [dispatch] is called, we invoke our [app] function. The [app] function will then invoke the [todos] reducer as well as the [goals] reducer. Those will return their specific portions of the state. And then, the [app] function will return a state object with a [todos] property (the value of which is what the [todos] reducer returned) and a [goals] property (the value of which is what the [goals] reducer returned).
-      function app(state = {}, action) {
-        return {
-          todos: todos(state.todos, action),
-          goals: goals(state.goals, action),
-        };
-      }
-
-      // APP Todos - Reducer
+      // App Todos - Reducer
       //Passing the root reducer to our store since our createStore function can only take one reducer.
       function todos(state = [], action) {
         switch (action.type) {
@@ -84,15 +85,6 @@
             return state;
         }
       }
-      /***  End - Reducer functions  ***/
-
-      // Create the STORE
-      const store = Redux.createStore(
-        Redux.combineReducers({
-          todos,
-          goals,
-        })
-      );
 
       // Lsiten for changes
       store.subscribe(() => {
@@ -147,7 +139,7 @@
 
       /**
        * Create button to remove item from the list
-       * @param {callback function} onclick
+       * @param {callback function} onClick
        * @returns the button with the event listener embeeded
        */
       function createRemoveButton(onClick) {

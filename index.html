@@ -47,7 +47,7 @@
         })
       );
 
-      // Action Creators
+      // Action Creators - Are functions that create and return Actions objects
       const addTodoAction = todo => ({ type: ADD_TODO, todo }); // Add todo event
 
       const removeTodoAction = id => ({ type: REMOVE_TODO, id }); // Remove todo event
@@ -59,6 +59,7 @@
       const removeGoalAction = id => ({ type: REMOVE_GOAL, id }); // Remove goal event
       // End - Action Creators
 
+      /*** Reducers - It's a pure function that takes the current state and an action and returns the new state of the application - It reduces to a brand new state   ***/
       // App todos - Reducer
       function todos(state = [], action) {
         switch (action.type) {

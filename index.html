@@ -54,13 +54,24 @@
         return next(action);
       };
 
+      // Logger Middleware
+      const logger = store => next => action => {
+        console.group(action.type);
+        console.log("The action: ", action);
+        const result = next(action);
+        console.log("The new state: ", store.getState());
+        console.groupEnd();
+
+        return result;
+      };
+
       // Create the STORE
       const store = Redux.createStore(
         Redux.combineReducers({
           todos,
           goals,
         }),
-        Redux.applyMiddleware(checker)
+        Redux.applyMiddleware(checker, logger)
       );
 
       // Action Creators - Are functions that create and return Actions objects

@@ -41,7 +41,8 @@
 
       // According to my inverstor, bitcoin is not a good idea, so we can't add bitcoin word at the goal and todo list.
       // This function checks is the user try to add a bitcoin to the todo and goal list.
-      function checkAndDispatch(store, action) {
+      // next is the next middleware in line, if we have more than one middleware or dispatch()
+      const checker = store => next => action => {
         if (action.type === ADD_TODO && action.todo.name.toLowerCase().includes("bitcoin")) {
           return alert("Nope. that is not a good idea");
         }
@@ -50,15 +51,16 @@
           return alert("Nope. that is not a good idea");
         }
 
-        return store.dispatch(action);
-      }
+        return next(action);
+      };
 
       // Create the STORE
       const store = Redux.createStore(
         Redux.combineReducers({
           todos,
           goals,
-        })
+        }),
+        Redux.applyMiddleware(checker)
       );
 
       // Action Creators - Are functions that create and return Actions objects
@@ -121,8 +123,7 @@
         input.value = ""; // Reset the value
 
         // Add the todo to the state
-        checkAndDispatch(
-          store,
+        store.dispatch(
           // The dispatch() method is responsible for emmiting the Action to the Store
           addTodoAction({
             name,
@@ -140,8 +141,7 @@
         input.value = ""; // Reset the value
 
         // Add the goal to the state
-        checkAndDispatch(
-          store,
+        store.dispatch(
           // The dispatch() method is responsible for emmiting the Action to the Store
           addGoalAction({
             name,
@@ -170,13 +170,13 @@
       function renderTodoToDOM(todo) {
         const node = document.createElement("li");
         const text = document.createTextNode(todo.name);
-        const removeBtn = createRemoveButton(() => checkAndDispatch(store, removeTodoAction(todo.id)));
+        const removeBtn = createRemoveButton(() => store.dispatch(removeTodoAction(todo.id)));
 
         node.appendChild(text);
         node.appendChild(removeBtn);
 
         node.style.textDecoration = todo.complete ? "line-through" : "none";
-        node.addEventListener("click", () => checkAndDispatch(store, toggleTodoAction(todo.id)));
+        node.addEventListener("click", () => store.dispatch(toggleTodoAction(todo.id)));
 
         document.querySelector("#todos").appendChild(node);
       }
@@ -184,7 +184,7 @@
       function renderGoalToDOM(goal) {
         const node = document.createElement("li");
         const text = document.createTextNode(goal.name);
-        const removeBtn = createRemoveButton(() => checkAndDispatch(store, removeGoalAction(goal.id)));
+        const removeBtn = createRemoveButton(() => store.dispatch(removeGoalAction(goal.id)));
 
         node.appendChild(text);
         node.appendChild(removeBtn);

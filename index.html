@@ -55,14 +55,14 @@
       };
 
       // Logger Middleware
+      // VERY IMPORTANT to use this Middleware to intercept all Dispatch calls and log out what the Action is that being Dispatched and what the sate changes to after the Reducer has run. This is very usefull during the App development.
       const logger = store => next => action => {
         console.group(action.type);
         console.log("The action: ", action);
-        const result = next(action);
         console.log("The new state: ", store.getState());
         console.groupEnd();
 
-        return result;
+        return next(action);
       };
 
       // Create the STORE

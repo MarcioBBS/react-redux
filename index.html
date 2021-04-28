@@ -64,8 +64,8 @@
       // VERY IMPORTANT to use this Middleware to intercept all Dispatch calls and log out what the Action is that being Dispatched and what the sate changes to after the Reducer has run. This is very usefull during the App development.
       const logger = store => next => action => {
         console.group(action.type);
-        console.log("The action: ", action);
-        console.log("The new state: ", store.getState());
+         console.log("The action: ", action);
+         console.log("The new state: ", store.getState());
         console.groupEnd();
 
         return next(action);
@@ -130,6 +130,7 @@
         goals.forEach(renderGoalToDOM);
         todos.forEach(renderTodoToDOM);
       });
+      /*** END -  App Code ***/
 
       /*** DOM manipulation ***/
       // Add Todo
@@ -140,9 +141,8 @@
         input.value = ""; // Reset the value
 
         // Add the todo to the state
-        store.dispatch(
-          // The dispatch() method is responsible for emmiting the Action to the Store
-          addTodoAction({
+        // The dispatch() method is responsible for emmiting the Action to the Store
+        store.dispatch(addTodoAction({
             name,
             complete: false,
             id: generateId(),
@@ -158,9 +158,8 @@
         input.value = ""; // Reset the value
 
         // Add the goal to the state
-        store.dispatch(
-          // The dispatch() method is responsible for emmiting the Action to the Store
-          addGoalAction({
+        // The dispatch() method is responsible for emmiting the Action to the Store
+        store.dispatch(addGoalAction({
             name,
             id: generateId(),
           })
@@ -208,7 +207,6 @@
 
         document.querySelector("#goals").appendChild(node);
       }
-
       /*** END- DOM manipulation ***/
     </script>
 
@@ -224,10 +222,29 @@
       };
 
       class Todos extends React.Component {
+        addItem = e => {
+          e.preventDefault();
+          const name = this.input.value;
+          this.input.value = ""; // Reset the input value
+
+          // The dispatch() method is responsible for emmiting the Action to the Store
+          this.props.store.dispatch(addTodoAction({
+            name,
+            complete: false,
+            id: generateId()
+          }))
+        }
+
         render() {
           return (
             <div>
-              TODOS
+              <h1>Todo List</h1>
+              <input
+                type="text"
+                placeholder="Add Todo"
+                ref={input => this.input = input} // Uncontrolled Component - ref provides a way to access DOM nodes
+              />
+              <button onClick={this.addItem}>Add Todo</button>
               <List />
             </div>
           );
@@ -249,14 +266,14 @@
         render() {
           return (
             <div>
-              <Todos />
+              <Todos store={this.props.store}/>
               <Goals />
             </div>
           );
         }
       }
 
-      ReactDOM.render(<App />, document.querySelector("#app"));
+      ReactDOM.render(<App store={store}/>, document.querySelector("#app"));
     </script>
   </body>
 </html>

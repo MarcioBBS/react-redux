@@ -120,9 +120,11 @@
       }
 
       // Lsiten for changes
+      // Add the Todos and Goals items to the DOM
       store.subscribe(() => {
         const { goals, todos } = store.getState();
 
+        // Reset the unorder list
         document.querySelector("#goals").innerHTML = "";
         document.querySelector("#todos").innerHTML = "";
 

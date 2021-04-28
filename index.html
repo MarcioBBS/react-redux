@@ -224,15 +224,15 @@
       class Todos extends React.Component {
         addItem = e => {
           e.preventDefault();
-          const name = this.input.value;
-          this.input.value = ""; // Reset the input value
+          const name = this.inputElement.value;
+          this.inputElement.value = ""; // Reset the input value
 
           // The dispatch() method is responsible for emmiting the Action to the Store
           this.props.store.dispatch(addTodoAction({
             name,
             complete: false,
             id: generateId()
-          }))
+          }));
         }
 
         render() {
@@ -242,9 +242,11 @@
               <input
                 type="text"
                 placeholder="Add Todo"
-                ref={input => this.input = input} // Uncontrolled Component - ref provides a way to access DOM nodes
+                // ref provides a way to access DOM nodes or React elements created in the render method.
+                // We're storing here a reference of the [input] DOM element in the [this.inputElement] instance of the [Todos] class
+                ref={ input => this.inputElement = input } 
               />
-              <button onClick={this.addItem}>Add Todo</button>
+              <button onClick={ this.addItem }>Add Todo</button>
               <List />
             </div>
           );
@@ -252,10 +254,27 @@
       }
 
       class Goals extends React.Component {
+        addItem = e => {
+           e.preventDefault();
+           const name = this.inputElement.value;
+           this.inputElement.value = "";
+
+           this.props.store.dispatch(addGoalAction({
+            name,
+            id: generateId(),
+            }));
+        } 
+
         render() {
           return (
             <div>
-              Goals
+              <h1>Goals List</h1>
+              <input 
+               type='text'
+               placeholder='Add Goal'
+               ref={ input => this.inputElement = input}
+              />
+              <button onClick= { this.addItem } >Add Goal</button>
               <List />
             </div>
           );
@@ -266,8 +285,8 @@
         render() {
           return (
             <div>
-              <Todos store={this.props.store}/>
-              <Goals />
+              <Todos store={ this.props.store }/>
+              <Goals store={ this.props.store }/>
             </div>
           );
         }

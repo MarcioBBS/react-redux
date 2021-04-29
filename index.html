@@ -11,23 +11,7 @@
     <script src="https://unpkg.com/babel-standalone@6.15.0/babel.min.js"></script>
   </head>
   <body style="padding: 20px">
-    <h1>React - Redux</h1>
-    <hr />
-    <br />
-
-    <div class="list">
-      <input type="text" name="todo" id="todo" placeholder="Add Todo" />
-      <button id="todoBtn">Add Todo</button>
-      <ul id="todos"></ul>
-    </div>
-
-    <div class="list">
-      <input type="text" name="goal" id="goal" placeholder="Add Goal" />
-      <button id="goalBtn">Add Goal</button>
-      <ul id="goals"></ul>
-    </div>
-
-    <hr />
+    <h1 style="text-align: center;">React - Redux</h1> 
     <div id="app"></div>
 
     <script>
@@ -117,99 +101,10 @@
           default:
             return state;
         }
-      }
-
-      // Lsiten for changes
-      // Add the Todos and Goals items to the DOM
-      store.subscribe(() => {
-        const { goals, todos } = store.getState();
-
-        // Reset the unorder list
-        document.querySelector("#goals").innerHTML = "";
-        document.querySelector("#todos").innerHTML = "";
-
-        // Add items to the DOM
-        goals.forEach(renderGoalToDOM); 
-        todos.forEach(renderTodoToDOM);
-      });
+      }   
       /*** END -  App Code ***/
 
-      /*** DOM manipulation ***/
-      // Add Todo
-      function addTodo() {
-        // Get the value from the UI
-        const input = document.querySelector("#todo");
-        const name = input.value;
-        input.value = ""; // Reset the value
-
-        // Add the todo to the state
-        // The dispatch() method is responsible for emmiting the Action to the Store
-        store.dispatch(addTodoAction({
-            name,
-            complete: false,
-            id: generateId(),
-          })
-        );
-      }
-
-      // Add Goal
-      function addGoal() {
-        // Get the value from the UI
-        const input = document.querySelector("#goal");
-        const name = input.value;
-        input.value = ""; // Reset the value
-
-        // Add the goal to the state
-        // The dispatch() method is responsible for emmiting the Action to the Store
-        store.dispatch(addGoalAction({
-            name,
-            id: generateId(),
-          })
-        );
-      }
-
-      //Add new Todo
-      document.querySelector("#todoBtn").addEventListener("click", addTodo);
-      //Add new Goal
-      document.querySelector("#goalBtn").addEventListener("click", addGoal);
-
-      /**
-       * Create button to remove item from the list
-       * @param {callback function} onClick
-       * @returns the button with the event listener embeeded
-       */
-      function createRemoveButton(onClick) {
-        const removeBtn = document.createElement("button");
-        removeBtn.innerHTML = " X ";
-        removeBtn.addEventListener("click", onClick);
-        return removeBtn;
-      }
-
-      function renderTodoToDOM(todo) {
-        const node = document.createElement("li");
-        const text = document.createTextNode(todo.name);
-        const removeBtn = createRemoveButton(() => store.dispatch(removeTodoAction(todo.id)));
-
-        node.appendChild(text);
-        node.appendChild(removeBtn);
-
-        node.style.textDecoration = todo.complete ? "line-through" : "none";
-        node.addEventListener("click", () => store.dispatch(toggleTodoAction(todo.id)));
-
-        document.querySelector("#todos").appendChild(node);
-      }
-
-      function renderGoalToDOM(goal) {
-        const node = document.createElement("li");
-        const text = document.createTextNode(goal.name);
-        const removeBtn = createRemoveButton(() => store.dispatch(removeGoalAction(goal.id)));
-
-        node.appendChild(text);
-        node.appendChild(removeBtn);
-
-        document.querySelector("#goals").appendChild(node);
-      }
-      /*** END- DOM manipulation ***/
+   
     </script>
 
     <script type="text/babel">

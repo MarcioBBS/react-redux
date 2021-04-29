@@ -129,7 +129,7 @@
         document.querySelector("#todos").innerHTML = "";
 
         // Add items to the DOM
-        goals.forEach(renderGoalToDOM);
+        goals.forEach(renderGoalToDOM); 
         todos.forEach(renderTodoToDOM);
       });
       /*** END -  App Code ***/
@@ -215,10 +215,17 @@
     <script type="text/babel">
       // REACT
 
-      const List = props => {
-        return (
+      const List = props => {        
+        return (           
           <ul>
-            <li>LIST</li>
+            {props.items.map(item => (
+               <li key={item.id}>
+                  <span>{item.name}</span>
+                  <button onClick={() => props.removeItem(item)}> 
+                     X 
+                  </button>
+               </li>
+            ))}
           </ul>
         );
       };
@@ -237,7 +244,9 @@
           }));
         }
 
-        render() {
+        removeItem = todo => this.props.store.dispatch(removeTodoAction(todo.id));
+
+        render() {         
           return (
             <div>
               <h1>Todo List</h1>
@@ -249,7 +258,10 @@
                 ref={ input => this.inputElement = input } 
               />
               <button onClick={ this.addItem }>Add Todo</button>
-              <List />
+              <List 
+               items={ this.props.todos }
+               removeItem={ this.removeItem }
+               />
             </div>
           );
         }
@@ -267,7 +279,9 @@
             }));
         } 
 
-        render() {
+        removeItem = goal => this.props.store.dispatch(removeGoalAction(goal.id))
+
+        render() {           
           return (
             <div>
               <h1>Goals List</h1>
@@ -277,23 +291,27 @@
                ref={ input => this.inputElement = input}
               />
               <button onClick= { this.addItem } >Add Goal</button>
-              <List />
+              <List 
+               items={ this.props.goals }
+               removeItem={ this.removeItem }
+               />
             </div>
           );
         }
       }
 
       class App extends React.Component {
-        componentDidMount()  {
+        componentDidMount() {
            const { store } = this.props;
 
-           
-           store.subscribe(() => this.forceUpdate() ); // forceUpdate() is typically an anti-pattern but only used here for this specific case 
+           // Every component instance has a forceUpdate() method. It causes a re-render of that specific component, and because of the way React works, all of child components (In this case <Todos /> and <Goals / >) will re-render as well getting the update UI.
+           // forceUpdate() is typically an anti-pattern but only used here for this specific case - because we don't have a setState() method which causes the re-render on the UI. 
+           store.subscribe(() => this.forceUpdate()); 
         }
 
         render() {
-           const { store } = this.props;
-           const { todos, goals } = store.getState();
+           const { store } = this.props; // Get the store
+           const { todos, goals } = store.getState(); // Get the specific individual slices of the state.
           return (
             <div>
               <Todos todos={ todos } store={ this.props.store }/>

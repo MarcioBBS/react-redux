@@ -62,6 +62,7 @@
         Redux.combineReducers({
           todos,
           goals,
+          loading,
         }),
         Redux.applyMiddleware(checker, logger)
       );
@@ -109,7 +110,17 @@
           default:
             return state;
         }
-      }   
+      }  
+      
+      // App loading - Reducer
+      function loading(state = true, action) {
+         switch (action.type) {
+            case RECEIVE_DATA:              
+               return false;
+            default:
+               return state;
+         }
+      }
       /*** END -  App Code ***/
 
    
@@ -228,12 +239,16 @@
 
         render() {
            const { store } = this.props; // Get the store
-           const { todos, goals } = store.getState(); // Get the specific individual slices of the state.
+           const { todos, goals, loading } = store.getState(); // Get the specific individual slices of the state.
+
+           if (loading === true) {
+              return <h3>Loading...</h3>
+           }
+
           return (
-            <div>
+            <div>              
               <Todos todos={ todos } store={ this.props.store }/>
               <Goals goals={ goals } store={ this.props.store }/>
-
             </div>
           );
         }

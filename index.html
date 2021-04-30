@@ -163,7 +163,18 @@
           }));
         }
 
-        removeItem = todo => this.props.store.dispatch(removeTodoAction(todo.id));
+        removeItem = todo => {
+          // Add Optimistically Delete items - Delet todo item for UI first, just to speed up the delete on the UI 
+          this.props.store.dispatch(removeTodoAction(todo.id));  
+
+          // Delete the todo item at the Database
+         return API.deleteTodo(todo.id)
+            .catch(()=> {
+               // Add the todo item back in case something went wrong.
+               this.props.store.dispatch(addTodoAction(todo))
+               alert('Ooops, something went wrong - please try again!');
+            }) 
+        }   
 
         toggleItem = id => this.props.store.dispatch(toggleTodoAction(id));
 
@@ -201,7 +212,19 @@
             }));
         } 
 
-        removeItem = goal => this.props.store.dispatch(removeGoalAction(goal.id))
+        removeItem = goal => {
+           // Add Optimistically Delete items - Delet todo item for UI first, just to speed up the delete on the UI 
+           this.props.store.dispatch(removeGoalAction(goal.id))
+
+           return API.deleteGoal()
+             .catch(() => {
+               // Add the todo item back in case something went wrong.
+               this.props.store.dispatch(addGoalAction(goal))
+               alert('Ooops, something went wrong - please try again!');
+             })
+        }  
+
+        return 
 
         render() {           
           return (
@@ -241,6 +264,7 @@
            const { store } = this.props; // Get the store
            const { todos, goals, loading } = store.getState(); // Get the specific individual slices of the state.
 
+           // Render Loading... text while the Promise is not fulfilled
            if (loading === true) {
               return <h3>Loading...</h3>
            }

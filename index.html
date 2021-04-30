@@ -210,34 +210,7 @@
           );
         }
       }
-
-      class LogTodos extends React.Component {
-         fetchTodos = API.fetchTodos().then(res => {
-            console.log(`*** TODOS ***`);
-            res.map(todo => console.log(todo.name))
-         }) 
-
-         render() {            
-            return(
-               <div>                  
-               </div>
-            )
-         }
-      }
-
-      class LogGoals extends React.Component {
-         fetchGoals = API.fetchGoals().then(res => {
-            console.log(`*** GOALS ***`);
-            res.map(goal => console.log(goal.name))
-         })
-
-         render() {
-            return (
-               <div></div>
-            )
-         }
-      }
-
+     
       class App extends React.Component {
         componentDidMount() {
            const { store } = this.props;
@@ -261,8 +234,6 @@
               <Todos todos={ todos } store={ this.props.store }/>
               <Goals goals={ goals } store={ this.props.store }/>
 
-               {/* <LogTodos />  This is serial and just make the user wait unnecessarily amount of time */}
-               {/* <LogGoals />  This is serial and just make the user wait unnecessarily amount of time */}
             </div>
           );
         }

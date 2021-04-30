@@ -9,6 +9,7 @@
     <script src="https://unpkg.com/react@16.3.0-alpha.1/umd/react.development.js"></script>
     <script src="https://unpkg.com/react-dom@16.3.0-alpha.1/umd/react-dom.development.js"></script>
     <script src="https://unpkg.com/babel-standalone@6.15.0/babel.min.js"></script>
+    <script src="https://tylermcginnis.com/goals-todos-api/index.js"></script>
   </head>
   <body style="padding: 20px">
     <h1 style="text-align: center;">React - Redux</h1> 
@@ -28,6 +29,7 @@
       const TOGGLE_TODO = "TOGGLE_TODO";
       const ADD_GOAL = "ADD_GOAL";
       const REMOVE_GOAL = "REMOVE_GOAL";
+      const RECEIVE_DATA = "RECEIVE_DATA";
 
       // According to my inverstor, bitcoin is not a good idea, so we can't add bitcoin word at the goal and todo list.
       // This function checks is the user try to add a bitcoin to the todo and goal list.
@@ -74,6 +76,8 @@
       const addGoalAction = goal => ({ type: ADD_GOAL, goal }); // Add goal event
 
       const removeGoalAction = id => ({ type: REMOVE_GOAL, id }); // Remove goal event
+
+      const receiveDataAction = (todos, goals) => ({ type: RECEIVE_DATA, todos, goals }); // Add todos and goals data from API
       // End - Action Creators
 
       /*** Reducers - It's a pure function that takes the current state and an action and returns the new state of the application - It reduces to a brand new state   ***/
@@ -86,6 +90,8 @@
             return state.filter(todo => todo.id !== action.id);
           case TOGGLE_TODO:
             return state.map(todo => (todo.id !== action.id ? todo : Object.assign({}, todo, { complete: !todo.complete })));
+         case RECEIVE_DATA:
+            return action.todos;
           default:
             return state;
         }
@@ -98,6 +104,8 @@
             return [...state, action.goal];
           case REMOVE_GOAL:
             return state.filter(goal => goal.id !== action.id);
+         case RECEIVE_DATA:
+            return action.goals;
           default:
             return state;
         }
@@ -203,6 +211,33 @@
         }
       }
 
+      class LogTodos extends React.Component {
+         fetchTodos = API.fetchTodos().then(res => {
+            console.log(`*** TODOS ***`);
+            res.map(todo => console.log(todo.name))
+         }) 
+
+         render() {            
+            return(
+               <div>                  
+               </div>
+            )
+         }
+      }
+
+      class LogGoals extends React.Component {
+         fetchGoals = API.fetchGoals().then(res => {
+            console.log(`*** GOALS ***`);
+            res.map(goal => console.log(goal.name))
+         })
+
+         render() {
+            return (
+               <div></div>
+            )
+         }
+      }
+
       class App extends React.Component {
         componentDidMount() {
            const { store } = this.props;
@@ -210,6 +245,12 @@
            // Every component instance has a forceUpdate() method. It causes a re-render of that specific component, and because of the way React works, all of child components (In this case <Todos /> and <Goals / >) will re-render as well getting the update UI.
            // forceUpdate() is typically an anti-pattern but only used here for this specific case - because we don't have a setState() method which causes the re-render on the UI. 
            store.subscribe(() => this.forceUpdate()); 
+
+           // Get the todos and goals data and dispatch in the store.
+           Promise.all([API.fetchTodos(), API.fetchGoals()]).then(([todos, goals]) => {
+              store.dispatch(receiveDataAction(todos, goals));
+           })
+           
         }
 
         render() {
@@ -219,6 +260,9 @@
             <div>
               <Todos todos={ todos } store={ this.props.store }/>
               <Goals goals={ goals } store={ this.props.store }/>
+
+               {/* <LogTodos />  This is serial and just make the user wait unnecessarily amount of time */}
+               {/* <LogGoals />  This is serial and just make the user wait unnecessarily amount of time */}
             </div>
           );
         }

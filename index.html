@@ -167,16 +167,27 @@
           // Add Optimistically Delete items - Delet todo item for UI first, just to speed up the delete on the UI 
           this.props.store.dispatch(removeTodoAction(todo.id));  
 
-          // Delete the todo item at the Database
+          // Delete todo item from the Database
          return API.deleteTodo(todo.id)
-            .catch(()=> {
+            .catch(() => {
                // Add the todo item back in case something went wrong.
                this.props.store.dispatch(addTodoAction(todo))
                alert('Ooops, something went wrong - please try again!');
             }) 
         }   
 
-        toggleItem = id => this.props.store.dispatch(toggleTodoAction(id));
+        // Toggle todo item from the Database        
+        toggleItem = id => {
+           // Add Optimistically Toggle items - Toggle todo item for UI first, just to speed up the toggle on the UI 
+           this.props.store.dispatch(toggleTodoAction(id));
+
+         return API.saveTodoToggle(id)
+            .catch(() => {
+               this.props.store.dispatch(toggleTodoAction(id));
+               alert('Ooops, something went wrong - please try again!');
+            })
+        }
+
 
         render() {         
           return (

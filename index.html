@@ -152,17 +152,19 @@
       class Todos extends React.Component {
         addItem = e => {
           e.preventDefault();
-          const name = this.inputElement.value;
-          this.inputElement.value = ""; // Reset the input value
 
-          // The dispatch() method is responsible for emmiting the Action to the Store
-          this.props.store.dispatch(addTodoAction({
-            name,
-            complete: false,
-            id: generateId()
-          }));
-        }
-
+          // Add todo item to the Database
+          return API.saveTodo(this.inputElement.value)
+            .then(todo => {
+               // The dispatch() method is responsible for emmiting the Action to the Store
+               this.props.store.dispatch(addTodoAction(todo))     
+               this.inputElement.value = '';
+            })
+            .catch(err => {
+               alert('Ooops, something went wrong - please try again!');
+            })
+        }      
+          
         removeItem = todo => {
           // Add Optimistically Delete items - Delet todo item for UI first, just to speed up the delete on the UI 
           this.props.store.dispatch(removeTodoAction(todo.id));  
@@ -214,13 +216,16 @@
       class Goals extends React.Component {
         addItem = e => {
            e.preventDefault();
-           const name = this.inputElement.value;
-           this.inputElement.value = "";
 
-           this.props.store.dispatch(addGoalAction({
-            name,
-            id: generateId(),
-            }));
+           // Add goal item to the Database
+           API.saveGoal(this.inputElement.value)
+             .then(goal => {
+               this.props.store.dispatch(addGoalAction(goal))     
+               this.inputElement.value = "";
+             })
+             .catch(err => {
+               alert('Ooops, something went wrong - please try again!');     
+             })
         } 
 
         removeItem = goal => {

@@ -32,7 +32,7 @@ function createStore(reducer) {
   };
 
   // 4. Update the state
-  // Responsible to update the sate inside of the actual Store - It needs to receive the Actiion to tell dispatch() the specific event that occurred inside of the applicaton
+  // Responsible to update the sate inside of the actual Store - It needs to receive the Actiion which is passed via Reducer pure functions to tell the dispatch() the specific event that occurred inside of the applicaton
   const dispatch = action => {
     state = reducer(state, action);
     listeners.forEach(listener => listener()); // Invoke all Listener(function) inside of the array because the state has (potentially) changed.

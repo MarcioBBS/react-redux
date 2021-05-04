@@ -78,7 +78,7 @@
           goals,
           loading,
         }),
-        Redux.applyMiddleware(ReduxThunk.default, checker, logger) // Calling Middlewares before the Actions being Dispatched.
+        Redux.applyMiddleware(ReduxThunk.default, checker, logger) // Executing the Middlewares (In order it is listed) before the Actions being Dispatched.
       );
 
       // Action Creators - Are functions that create and return Actions objects

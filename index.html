@@ -94,6 +94,15 @@
 
       const receiveDataAction = (todos, goals) => ({ type: RECEIVE_DATA, todos, goals }); // Add todos and goals data from API
 
+      const handleInitialData = () => {
+         return (dispatch) => {
+            // Get the todos and goals data and dispatch in the store.
+           return Promise.all([API.fetchTodos(), API.fetchGoals()]).then(([todos, goals]) => {
+              dispatch(receiveDataAction(todos, goals));
+           })
+         }
+      }
+
       /*
        * @augments: name: The todo name to be add to the Database
        * @callback: cb: Call callback function to clean the input text value.
@@ -327,10 +336,8 @@
            // forceUpdate() is typically an anti-pattern but only used here for this specific case - because we don't have a setState() method which causes the re-render on the UI. 
            store.subscribe(() => this.forceUpdate()); 
 
-           // Get the todos and goals data and dispatch in the store.
-           Promise.all([API.fetchTodos(), API.fetchGoals()]).then(([todos, goals]) => {
-              store.dispatch(receiveDataAction(todos, goals));
-           })           
+           // Call action creator to fetch the Data
+           store.dispatch(handleInitialData());           
         }
 
         render() {

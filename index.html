@@ -94,6 +94,25 @@
 
       const receiveDataAction = (todos, goals) => ({ type: RECEIVE_DATA, todos, goals }); // Add todos and goals data from API
 
+      /*
+       * @augments: name: The todo name to be add to the Database
+       * @callback: cb: Call callback function to clean the input text value.
+      */
+      const handleAddTodo = (name, cb) => {
+         return (dispatch) => {
+            // Add todo item to the Database
+          return API.saveTodo(name)
+            .then(todo => {
+               // The dispatch() method is responsible for emmiting the Action to the Store
+               dispatch(addTodoAction(todo))
+               cb();
+            })
+            .catch(err => {
+               alert('Ooops, something went wrong - please try again!');
+            })
+         }
+      }
+
       const handleDeleteTodo = todo => {
          return (dispatch) => {
             // Add Optimistically Delete items - Delet todo item for UI first, just to speed up the delete on the UI 
@@ -107,6 +126,19 @@
                alert('Ooops, something went wrong - please try again!');
             }) 
          }         
+      }
+
+      const handleToggleTodo = id =>{
+         return (dispatch) => {
+            // Add Optimistically Toggle items - Toggle todo item for UI first, just to speed up the toggle on the UI 
+           dispatch(toggleTodoAction(id));
+
+           return API.saveTodoToggle(id)
+              .catch(() => {
+                 dispatch(toggleTodoAction(id));
+                 alert('Ooops, something went wrong - please try again!');
+              })
+         }
       }
 
       /*
@@ -212,36 +244,22 @@
         );
       };
 
-      class Todos extends React.Component {
-        addItem = e => {
+      class Todos extends React.Component {        
+         // Add todo item from the Database
+         addItem = e => {
           e.preventDefault();
 
-          // Add todo item to the Database
-          return API.saveTodo(this.inputElement.value)
-            .then(todo => {
-               // The dispatch() method is responsible for emmiting the Action to the Store
-               this.props.store.dispatch(addTodoAction(todo))     
-               this.inputElement.value = ''; // Clean the input text value.
-            })
-            .catch(err => {
-               alert('Ooops, something went wrong - please try again!');
-            })
+          this.props.store.dispatch(handleAddTodo(
+             this.inputElement.value,
+             () => this.inputElement.value = ''
+          ))         
         }      
           
+        // Remove todo item from the Database
         removeItem = todo => this.props.store.dispatch(handleDeleteTodo(todo));
 
-        // Toggle todo item from the Database        
-        toggleItem = id => {
-           // Add Optimistically Toggle items - Toggle todo item for UI first, just to speed up the toggle on the UI 
-           this.props.store.dispatch(toggleTodoAction(id));
-
-         return API.saveTodoToggle(id)
-            .catch(() => {
-               this.props.store.dispatch(toggleTodoAction(id));
-               alert('Ooops, something went wrong - please try again!');
-            })
-        }
-
+        // Toggle todo item from the Database   
+        toggleItem = id => this.props.store.dispatch(handleToggleTodo(id));
 
         render() {         
           return (
@@ -266,6 +284,7 @@
       }
 
       class Goals extends React.Component {
+        // Add goal item from the Database
         addItem = e => {
            e.preventDefault();
 
@@ -275,6 +294,7 @@
            ))           
         } 
 
+        // Remove goal item from the Database
         removeItem = goal => this.props.store.dispatch(handleDeleteGoal(goal))      
 
         return 

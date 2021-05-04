@@ -108,6 +108,40 @@
             }) 
          }         
       }
+
+      /*
+       * @augments: name: The goal name to be add to the Database
+       * @callback: cb: Call callback function to clean the input text value.
+      */
+      const handleAddGoal = (name, cb) => {
+         return (dispatch) => {
+            // Add goal item to the Database
+           return API.saveGoal(name)
+             .then(goal => {
+                // The dispatch() method is responsible for emmiting the Action to the Store
+               dispatch(addGoalAction(goal));    
+               cb(); 
+             })
+             .catch(err => {
+               alert('Ooops, something went wrong - please try again!');     
+             })
+         }
+      }
+
+      const handleDeleteGoal = goal => {
+         return (dispatch) => {
+            // Add Optimistically Delete items - Delet todo item for UI first, just to speed up the delete on the UI 
+           dispatch(removeGoalAction(goal.id))
+
+            return API.deleteGoal(goal.id)
+            .catch(() => {
+               // Add the todo item back in case something went wrong.
+               dispatch(addGoalAction(goal))
+               alert('Ooops, something went wrong - please try again!');
+            })
+         }
+
+      }
       // End - Action Creators
 
       /*** Reducers - It's a pure function that takes the current state and an action and returns the new state of the application - It reduces to a brand new state   ***/
@@ -235,29 +269,13 @@
         addItem = e => {
            e.preventDefault();
 
-           // Add goal item to the Database
-           API.saveGoal(this.inputElement.value)
-             .then(goal => {
-                // The dispatch() method is responsible for emmiting the Action to the Store
-               this.props.store.dispatch(addGoalAction(goal))     
-               this.inputElement.value = ""; // Clean the input text value.
-             })
-             .catch(err => {
-               alert('Ooops, something went wrong - please try again!');     
-             })
+           this.props.store.dispatch(handleAddGoal(
+             this.inputElement.value,
+             () => this.inputElement.value = "" // Clean the input text value.
+           ))           
         } 
 
-        removeItem = goal => {
-           // Add Optimistically Delete items - Delet todo item for UI first, just to speed up the delete on the UI 
-           this.props.store.dispatch(removeGoalAction(goal.id))
-
-           return API.deleteGoal()
-             .catch(() => {
-               // Add the todo item back in case something went wrong.
-               this.props.store.dispatch(addGoalAction(goal))
-               alert('Ooops, something went wrong - please try again!');
-             })
-        }  
+        removeItem = goal => this.props.store.dispatch(handleDeleteGoal(goal))      
 
         return 
 

@@ -9,7 +9,8 @@
     <script src="https://unpkg.com/react@16.3.0-alpha.1/umd/react.development.js"></script>
     <script src="https://unpkg.com/react-dom@16.3.0-alpha.1/umd/react-dom.development.js"></script>
     <script src="https://unpkg.com/babel-standalone@6.15.0/babel.min.js"></script>
-    <script src="https://tylermcginnis.com/goals-todos-api/index.js"></script>
+    <script src="https://tylermcginnis.com/goals-todos-api/index.js"></script> <!-- Add the Database to the application-->
+    <script src="https://unpkg.com/redux-thunk@2.2.0/dist/redux-thunk.min.js"></script> <!-- Add Thunk middleware for Redux -->
   </head>
   <body style="padding: 20px">
     <h1 style="text-align: center;">React - Redux</h1> 
@@ -57,6 +58,14 @@
         return result;
       };
 
+      const thunk = store => next => action => {
+         if (typeof action === 'function') {
+            return action(store.dispatch)
+         }
+
+         return next(action);
+      }
+
       // Create the STORE
       const store = Redux.createStore(
         Redux.combineReducers({
@@ -64,7 +73,7 @@
           goals,
           loading,
         }),
-        Redux.applyMiddleware(checker, logger) // Calling Middlewares before the Actions being Dispatched.
+        Redux.applyMiddleware(thunk, checker, logger) // Calling Middlewares before the Actions being Dispatched.
       );
 
       // Action Creators - Are functions that create and return Actions objects
@@ -79,6 +88,21 @@
       const removeGoalAction = id => ({ type: REMOVE_GOAL, id }); // Remove goal event
 
       const receiveDataAction = (todos, goals) => ({ type: RECEIVE_DATA, todos, goals }); // Add todos and goals data from API
+
+      const handleDeleteTodo = todo => {
+         return (dispatch) => {
+            // Add Optimistically Delete items - Delet todo item for UI first, just to speed up the delete on the UI 
+            dispatch(removeTodoAction(todo.id));  
+
+            // Delete todo item from the Database
+            return API.deleteTodo(todo.id)
+            .catch(() => {
+               // Add the todo item back in case something went wrong.
+               dispatch(addTodoAction(todo))
+               alert('Ooops, something went wrong - please try again!');
+            }) 
+         }         
+      }
       // End - Action Creators
 
       /*** Reducers - It's a pure function that takes the current state and an action and returns the new state of the application - It reduces to a brand new state   ***/
@@ -165,18 +189,7 @@
             })
         }      
           
-        removeItem = todo => {
-          // Add Optimistically Delete items - Delet todo item for UI first, just to speed up the delete on the UI 
-          this.props.store.dispatch(removeTodoAction(todo.id));  
-
-          // Delete todo item from the Database
-         return API.deleteTodo(todo.id)
-            .catch(() => {
-               // Add the todo item back in case something went wrong.
-               this.props.store.dispatch(addTodoAction(todo))
-               alert('Ooops, something went wrong - please try again!');
-            }) 
-        }   
+        removeItem = todo => this.props.store.dispatch(handleDeleteTodo(todo));
 
         // Toggle todo item from the Database        
         toggleItem = id => {
@@ -246,6 +259,7 @@
         render() {           
           return (
             <div>
+               
               <h1>Goals List</h1>
               <input 
                type='text'

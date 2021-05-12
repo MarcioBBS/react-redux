@@ -356,7 +356,24 @@
         }
       }
 
-      ReactDOM.render(<App store={store}/>, document.querySelector("#app"));
+      const Context = React.createContext();
+
+      class Provider extends React.Component {
+         render() {
+            return (
+               <Context.Provider value= {this.props.store} >
+                {this.props.store}
+               </Context.Provider>   
+            )
+         }
+      }
+
+      ReactDOM.render(
+         <Provider store={store}>
+            <App />
+         </Provider>, 
+         document.querySelector("#app")
+      );
     </script>
   </body>
 </html>

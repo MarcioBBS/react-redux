@@ -351,25 +351,24 @@
             )
          }
       }
+
+      // Connects Goals Component to the store
+      // connect()() - First set of parenthesis we're passing the data that the component needs and the second set of parenthesis we pass the Component that needs to be rendered
+      const ConnectedGoals = connect((state) => ({
+         goals: state.goals
+      }))(Goals)
       
       class App extends React.Component {
         componentDidMount() {
-           const { store } = this.props;
-
-           // Every component instance has a forceUpdate() method. It causes a re-render of that specific component, and because of the way React works, all of child components (In this case <Todos /> and <Goals / >) will re-render as well getting the update UI.
-           // forceUpdate() is typically an anti-pattern but only used here for this specific case - because we don't have a setState() method which causes the re-render on the UI. 
-           store.subscribe(() => this.forceUpdate()); 
+           const { dispatch } = this.props;
 
            // Call action creator to fetch the Data
-           store.dispatch(handleInitialData());           
+           dispatch(handleInitialData());           
         }
 
-        render() {
-           const { store } = this.props; // Get the store
-           const { loading } = store.getState(); // Get the specific individual slices of the state.
-
+        render() {           
            // Render Loading... text while the Promise is not fulfilled
-           if (loading === true) {
+           if (this.props.loading === true) {
               return <h3>Loading...</h3>
            }
 
@@ -383,17 +382,10 @@
       }
 
       // Connects component to the store
-      class ConnectedApp extends React.Component {
-        render()   {
-          return (             
-            <Context.Consumer>
-               {(store) => (
-                  <App store={store} />
-               )}
-            </Context.Consumer>
-          )
-        }
-      }
+      // connect()() - First set of parenthesis we're passing the data that the component needs and the second set of parenthesis we pass the Component that needs to be rendered
+      const ConnectApp = connect((state) => ({
+         loading: state.loading
+      }))(App)
 
       const Context = React.createContext();     
 

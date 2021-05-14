@@ -382,6 +382,7 @@
         }
       }
 
+      // Connects component to the store
       class ConnectedApp extends React.Component {
         render()   {
           return (             
@@ -396,6 +397,7 @@
 
       const Context = React.createContext();     
 
+      // Provides the store globally to all subcomponents
       class Provider extends React.Component {
          render() {
             return (
@@ -407,6 +409,7 @@
       }
 
       ReactDOM.render(
+         // Provider component that wraps the application
          <Provider store={store}>
             <ConnectedApp />
          </Provider>, 
